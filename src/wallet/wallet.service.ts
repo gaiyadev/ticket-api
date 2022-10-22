@@ -74,17 +74,17 @@ export class WalletService {
     transactionType,
     wallet,
     reference,
-    paidAmount,
+    amount,
     metaData,
   }) {
     const transaction = new Transaction();
     transaction.transactionType = transactionType;
     transaction.transactionType = transactionType;
-    transaction.amount = paidAmount;
+    transaction.amount = amount;
     transaction.balanceBefore = Number(wallet.balance);
-    transaction.balanceAfter = Number(wallet.balance) + paidAmount;
-    // transaction.walletId = wallet.id as any;
+    transaction.balanceAfter = Number(wallet.balance) + amount;
     transaction.transactionReference = reference;
+    transaction.metaData = metaData;
     return await this.transactionRepository.save(transaction);
   }
 
@@ -97,14 +97,16 @@ export class WalletService {
     if (!wallet) {
       throw new NotFoundException('Wallet not found'!);
     }
+
     const verify = await this.verifyPayment(reference);
     if (verify.data.status === 'success') {
-      const paidAmount = Number(verify.data.amount) / 100;
-      wallet.balance = (Number(wallet.balance) + paidAmount) as any;
+      const amount = Number(verify.data.amount) / 100;
+      wallet.balance = Number(wallet.balance) + amount;
       await this.walletRepository.save(wallet);
 
+      //create transaction
       await this.createTransaction({
-        paidAmount: paidAmount,
+        amount: amount,
         metaData: verify.data.authorization,
         reference: verify.data.reference,
         transactionType: TransactionType.funding,
@@ -144,16 +146,15 @@ export class WalletService {
     }
 
     // Debiting the sender
-    wallet.balance = (Number(wallet.balance) - Number(amount)) as any;
+    wallet.balance = Number(wallet.balance) - Number(amount);
     await this.walletRepository.save(wallet);
 
     // Crediting the recipient
-    const paidAmount = Number(amount);
-    account.balance = (Number(account.balance) + paidAmount) as any;
+    account.balance = Number(account.balance) + Number(amount);
     await this.walletRepository.save(wallet);
 
     await this.createTransaction({
-      paidAmount: transferFund.amount,
+      amount: transferFund.amount,
       reference: account.walletId,
       transactionType: TransactionType.Transfer,
       wallet,
