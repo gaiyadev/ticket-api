@@ -1,11 +1,12 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, OneToOne,
+  Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { Wallet } from "../../wallet/entities/wallet.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import { Wallet } from '../../wallet/entities/wallet.entity';
 
 @Entity('users')
 export class User {
@@ -19,7 +20,16 @@ export class User {
   lastName: string;
 
   @Column({ nullable: true })
+  reqNumber: string;
+
+  @Column({ nullable: true })
   middleName: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  password: string;
 
   @Column({ nullable: true })
   department: string;

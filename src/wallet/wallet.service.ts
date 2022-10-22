@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class WalletService {
