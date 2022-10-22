@@ -1,10 +1,11 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
+import { Wallet } from "../../wallet/entities/wallet.entity";
 
 @Entity('users')
 export class User {
@@ -25,6 +26,12 @@ export class User {
 
   @Column({ nullable: true })
   faculty: string;
+
+  @OneToOne(() => Wallet, (wallet) => wallet.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
+  wallet: Wallet;
 
   @Column({ nullable: true })
   course: string;
