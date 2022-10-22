@@ -1,7 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+  ValidationPipe,
+  UsePipes,
+  UseGuards,
+} from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { GetUser } from '../user/custom-decorators/user-auth.decorator';
+import { User } from '../user/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { WalletTransferFund } from './dto/transfer-fund.dto';
 
 @Controller('wallet')
 export class WalletController {
@@ -12,14 +30,14 @@ export class WalletController {
     return this.walletService.create(createWalletDto);
   }
 
-  @Get()
-  findAll() {
-    return this.walletService.findAll();
+  @Get('/')
+  async findAll(): Promise<any> {
+    return await this.walletService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.walletService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<any> {
+    return await this.walletService.findOne(id);
   }
 
   @Patch(':id')
@@ -30,5 +48,21 @@ export class WalletController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.walletService.remove(+id);
+  }
+
+  @Get('/verify-payment/:reference/:id')
+  @HttpCode(HttpStatus.CREATED)
+  async addFund(@Param('reference') reference: string, @Param() id: number) {
+    return await this.walletService.addFund(reference, id);
+  }
+
+  @Post('/wallet-transfer')
+  @UseGuards(AuthGuard('user'))
+  @UsePipes(ValidationPipe)
+  async walletTransferFund(
+    @Body() transferFund: WalletTransferFund,
+    @GetUser() user: User,
+  ): Promise<any> {
+    return await this.walletService.walletTransferFund(transferFund, user);
   }
 }

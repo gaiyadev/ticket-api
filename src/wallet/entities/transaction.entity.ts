@@ -43,6 +43,9 @@ export class Transaction {
   })
   wallet: Wallet;
 
+  @Column({ nullable: true })
+  metaData: string
+
   @Column({ name: 'external_reference', type: 'varchar' })
   externalReference: string;
 
