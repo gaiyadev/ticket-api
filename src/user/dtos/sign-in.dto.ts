@@ -2,9 +2,9 @@ import { IsNotEmpty, MinLength } from 'class-validator';
 
 export class SignInDto {
   @IsNotEmpty()
-  reqNumber: string;
+  regNumber: string;
 
-  @MinLength(6)
+  // @MinLength(2)
   @IsNotEmpty()
   password: string;
 }

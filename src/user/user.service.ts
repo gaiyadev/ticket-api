@@ -104,10 +104,10 @@ export class UserService {
 
   //
   async signIn(signInDto: SignInDto): Promise<any> {
-    const { reqNumber, password } = signInDto;
+    const { regNumber, password } = signInDto;
 
     const user = await this.usersRepository.findOne({
-      where: { reqNumber: reqNumber },
+      where: { reqNumber: regNumber },
     });
 
     if (!user) {
@@ -132,7 +132,7 @@ export class UserService {
       statusCode: 200,
       accessToken,
       data: {
-        reqNumber: reqNumber,
+        reqNumber: regNumber,
         id: user.id,
       },
     };

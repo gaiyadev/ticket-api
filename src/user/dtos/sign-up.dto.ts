@@ -16,7 +16,7 @@ export class SignUpDto {
   @IsNotEmpty()
   reqNumber: string;
 
-  @MinLength(6)
+  @MinLength(3)
   @IsNotEmpty()
   password: string;
 

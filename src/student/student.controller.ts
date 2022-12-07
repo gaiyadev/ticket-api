@@ -26,7 +26,12 @@ export class StudentController {
 
   @Get('/')
   async findAll() {
-    return await await this.studentService.findAll();
+    return this.studentService.findAll();
+  }
+
+  @Get('/user/:id')
+  async findStudent(@Param('id') id: string) {
+    return this.studentService.findStudent(+id);
   }
 
   @Get('/student')
