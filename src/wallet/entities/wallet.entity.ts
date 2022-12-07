@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -30,7 +29,6 @@ export class Wallet {
   @OneToOne(() => User, (user) => user.wallet, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
   user: User;
 
   @OneToMany(() => Transaction, (transactions) => transactions.wallet, {

@@ -19,11 +19,14 @@ import { ChangePasswordDto } from './dtos/change-password.dto';
 import { GetUser } from './custom-decorators/user-auth.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
+import { SignInDto } from './dtos/sign-in.dto';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post('/signup')
+  @UsePipes(ValidationPipe)
   async signUp(@Body() signUpDto: SignUpDto): Promise<any> {
     return await this.userService.signUp(signUpDto);
   }
@@ -34,7 +37,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Post('/signin')
   @UsePipes(ValidationPipe)
-  async signIn(@Body() signInDto: SignUpDto): Promise<any> {
+  async signIn(@Body() signInDto: SignInDto): Promise<any> {
     return await this.userService.signIn(signInDto);
   }
 

@@ -21,7 +21,7 @@ import { User } from '../user/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { WalletTransferFund } from './dto/transfer-fund.dto';
 
-@Controller('wallet')
+@Controller('wallets')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 

@@ -2,14 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Wallet } from '../../wallet/entities/wallet.entity';
 
-@Entity('users')
-export class User {
+@Entity('students')
+export class Student {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,28 +27,16 @@ export class User {
   email: string;
 
   @Column({ nullable: true })
-  password: string;
-
-  @Column({ nullable: true })
   department: string;
 
   @Column({ nullable: true })
   faculty: string;
-
-  @OneToOne(() => Wallet, (wallet) => wallet.user, {
-    eager: true,
-    onDelete: 'CASCADE',
-  })
-  wallet: Wallet;
 
   @Column({ nullable: true })
   course: string;
 
   @Column({ nullable: true })
   level: string;
-
-  @Column({ nullable: false, default: false })
-  isAdmin: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

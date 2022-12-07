@@ -15,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordDto } from './dtos/change-password.dto';
+import { SignInDto } from './dtos/sign-in.dto';
 dotenv.config();
 
 @Injectable()
@@ -65,16 +66,17 @@ export class UserService {
     try {
       const user = new User();
       user.firstName = firstName;
-      user.password = await UserService.hashPassword(password, saltOrRound);
-      user.email = email;
-      user.faculty = faculty;
-      user.middleName = middleName;
-      user.course = course;
       user.lastName = lastName;
+      user.middleName = middleName;
+      user.email = email;
+      user.course = course;
+      user.faculty = faculty;
       user.level = level;
       user.reqNumber = reqNumber;
       user.department = department;
+      user.password = await UserService.hashPassword(password, saltOrRound);
       const savedUser = await this.usersRepository.save(user);
+      if (!savedUser) return;
 
       const wallet = new Wallet();
       wallet.userId = savedUser.id as any;
@@ -90,20 +92,23 @@ export class UserService {
         },
       };
     } catch (err) {
-      if (err.code === '23505') {
-        throw new ConflictException('Email address already taken.');
+      if (err.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Email address and/or reg number already taken.',
+        );
       } else {
+        console.log(err);
         throw new InternalServerErrorException('Something went wrong.');
       }
     }
   }
 
   //
-  async signIn(signInDto: SignUpDto): Promise<any> {
-    const { email, password } = signInDto;
+  async signIn(signInDto: SignInDto): Promise<any> {
+    const { reqNumber, password } = signInDto;
 
     const user = await this.usersRepository.findOne({
-      where: { email: email },
+      where: { reqNumber: reqNumber },
     });
 
     if (!user) {
@@ -117,7 +122,7 @@ export class UserService {
     }
 
     const payload = {
-      email: user.email,
+      reqNumber: user.reqNumber,
       id: user.id,
     };
 
@@ -128,7 +133,7 @@ export class UserService {
       statusCode: 200,
       accessToken,
       data: {
-        email: email,
+        reqNumber: reqNumber,
         id: user.id,
       },
     };

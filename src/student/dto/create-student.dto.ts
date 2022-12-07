@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 
-export class SignUpDto {
+export class CreateStudentDto {
   @IsNotEmpty()
   firstName: string;
 
@@ -15,10 +15,6 @@ export class SignUpDto {
 
   @IsNotEmpty()
   reqNumber: string;
-
-  @MinLength(6)
-  @IsNotEmpty()
-  password: string;
 
   @IsNotEmpty()
   department: string;

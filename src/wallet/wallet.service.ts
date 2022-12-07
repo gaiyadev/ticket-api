@@ -95,7 +95,7 @@ export class WalletService {
     });
 
     if (!wallet) {
-      throw new NotFoundException('Wallet not found'!);
+      throw new NotFoundException('Wallet not found');
     }
 
     const verify = await this.verifyPayment(reference);
