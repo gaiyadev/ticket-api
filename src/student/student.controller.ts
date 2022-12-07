@@ -8,6 +8,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -25,11 +26,11 @@ export class StudentController {
 
   @Get('/')
   async findAll() {
-    return await this.studentService.findAll();
+    return await await this.studentService.findAll();
   }
 
-  @Get('/:id')
-  async findOne(@Param('id') id: string) {
+  @Get('/student')
+  async findOne(@Query(ValidationPipe) id: any) {
     return await this.studentService.findOne(id);
   }
 

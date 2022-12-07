@@ -97,7 +97,6 @@ export class UserService {
           'Email address and/or reg number already taken.',
         );
       } else {
-        console.log(err);
         throw new InternalServerErrorException('Something went wrong.');
       }
     }
@@ -144,7 +143,11 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<any> {
-    return await this.usersRepository.findOne({ where: { id: id } });
+    const user = await this.usersRepository.findOne({ where: { id: id } });
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
   }
 
   async remove(id: number): Promise<any> {

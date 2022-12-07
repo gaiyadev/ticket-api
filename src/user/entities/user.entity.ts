@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Wallet } from '../../wallet/entities/wallet.entity';
+import { Ticket } from '../../ticket/entities/ticket.entity';
+import { JoinColumn } from 'typeorm/browser';
 
 @Entity('users')
 export class User {
@@ -37,11 +40,17 @@ export class User {
   @Column({ nullable: true })
   faculty: string;
 
-  @OneToOne(() => Wallet, (wallet) => wallet.user, {
+  @OneToMany(() => Wallet, (wallet) => wallet.user, {
     eager: true,
     onDelete: 'CASCADE',
   })
   wallet: Wallet;
+
+  @OneToMany(() => Ticket, (tickets) => tickets.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
+  tickets: Ticket[];
 
   @Column({ nullable: true })
   course: string;

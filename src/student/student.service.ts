@@ -65,9 +65,9 @@ export class StudentService {
     return await this.studentRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: any) {
     const student = await this.studentRepository.findOne({
-      where: { reqNumber: id },
+      where: { reqNumber: id.student },
     });
     if (!student) {
       throw new NotFoundException();

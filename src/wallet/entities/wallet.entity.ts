@@ -1,11 +1,11 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { Transaction } from './transaction.entity';
 import { User } from '../../user/entities/user.entity';
 
@@ -26,7 +26,7 @@ export class Wallet {
   @Column({ nullable: false, type: 'decimal', default: 0 })
   balance: number;
 
-  @OneToOne(() => User, (user) => user.wallet, {
+  @ManyToOne(() => User, (user) => user.wallet, {
     onDelete: 'CASCADE',
   })
   user: User;
