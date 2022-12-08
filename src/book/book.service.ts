@@ -21,7 +21,7 @@ export class BookService {
   }
 
   async findAll() {
-    return this.bookRepository.find();
+    return this.bookRepository.find({ order: { id: 'DESC' } });
   }
 
   async findOne(id: number) {
