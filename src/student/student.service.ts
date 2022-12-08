@@ -62,7 +62,7 @@ export class StudentService {
   }
 
   async findAll() {
-    return await this.studentRepository.find();
+    return await this.studentRepository.find({ order: { id: 'DESC' } });
   }
 
   async findStudent(id: number) {

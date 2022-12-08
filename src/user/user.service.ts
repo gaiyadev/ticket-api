@@ -89,6 +89,7 @@ export class UserService {
         data: {
           email: user.email,
           id: user.id,
+          admin: user.isAdmin,
         },
       };
     } catch (err) {
@@ -134,6 +135,7 @@ export class UserService {
       data: {
         reqNumber: regNumber,
         id: user.id,
+        isAdmin: user.isAdmin,
       },
     };
   }
@@ -188,6 +190,32 @@ export class UserService {
       return await account.save();
     } catch (err) {
       throw new InternalServerErrorException('Something went wrong.');
+    }
+  }
+
+  async createAdmin(signUpDto: SignUpDto): Promise<any> {
+    const { email, password, firstName, lastName, middleName } = signUpDto;
+
+    const saltOrRound = await bcrypt.genSalt(parseInt(process.env.GEN_SALT));
+
+    try {
+      const user = new User();
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.middleName = middleName;
+      user.email = email;
+      user.reqNumber = email;
+      user.isAdmin = true;
+      user.password = await UserService.hashPassword(password, saltOrRound);
+      return await this.usersRepository.save(user);
+    } catch (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Email address and/or reg number already taken.',
+        );
+      } else {
+        throw new InternalServerErrorException('Something went wrong.');
+      }
     }
   }
 }

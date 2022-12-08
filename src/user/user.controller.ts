@@ -66,4 +66,10 @@ export class UserController {
   ): Promise<any> {
     return await this.userService.changePassword(changePasswordDto, user);
   }
+
+  @Post('/admin')
+  @UsePipes(ValidationPipe)
+  async createAdmin(@Body() signUpDto: SignUpDto): Promise<any> {
+    return await this.userService.createAdmin(signUpDto);
+  }
 }
