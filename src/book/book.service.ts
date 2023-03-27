@@ -14,7 +14,8 @@ export class BookService {
   constructor(
     @InjectRepository(Book)
     private readonly bookRepository: Repository<Book>,
-  ) {}
+  ) {
+  }
 
   async create(createBookDto: CreateBookDto) {
     return await this.bookRepository.save(createBookDto);
@@ -33,7 +34,7 @@ export class BookService {
   }
 
   async update(id: number, updateBookDto: UpdateBookDto) {
-    const { from, to, time } = updateBookDto;
+    const { from, to, time, price } = updateBookDto;
     const book = await this.bookRepository.findOne({ where: { id: id } });
     if (!book) {
       throw new NotFoundException();
@@ -42,6 +43,7 @@ export class BookService {
       book.to = to;
       book.time = time;
       book.from = from;
+      book.price = price;
       return this.bookRepository.save(book);
     } catch (e) {
       throw new InternalServerErrorException();
@@ -55,4 +57,5 @@ export class BookService {
     }
     return book;
   }
+
 }

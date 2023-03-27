@@ -40,7 +40,7 @@ export class BookController {
   }
 
   @Delete(':id')
- async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return await this.bookService.remove(+id);
   }
 }

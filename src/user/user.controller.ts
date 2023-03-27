@@ -72,4 +72,9 @@ export class UserController {
   async createAdmin(@Body() signUpDto: SignUpDto): Promise<any> {
     return await this.userService.createAdmin(signUpDto);
   }
+
+  @Get('/active/counts')
+  async StudentsCount() {
+    return await this.userService.StudentsCount();
+  }
 }

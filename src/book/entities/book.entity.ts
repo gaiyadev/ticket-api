@@ -22,6 +22,9 @@ export class Book {
   @Column()
   time: string;
 
+  @Column()
+  price: string;
+
   @OneToMany(() => Ticket, (ticket) => ticket.book, {
     onDelete: 'CASCADE',
   })

@@ -77,7 +77,7 @@ export class StudentService {
       where: { reqNumber: id.student },
     });
     if (!student) {
-      throw new NotFoundException();
+      throw new NotFoundException('Reg. Number not found');
     }
     return student;
   }
@@ -127,5 +127,9 @@ export class StudentService {
       throw new NotFoundException();
     }
     return student;
+  }
+
+  async StudentsCount() {
+    return await this.studentRepository.findAndCount();
   }
 }

@@ -8,8 +8,8 @@ import {
   Delete,
   UseGuards,
   UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+  ValidationPipe, ParseIntPipe
+} from "@nestjs/common";
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -51,7 +51,7 @@ export class TicketController {
   }
 
   @Delete(':id')
- async remove(@Param('id') id: string) {
-    return  await this.ticketService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<any> {
+    return await this.ticketService.remove(id);
   }
 }

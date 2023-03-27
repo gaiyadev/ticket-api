@@ -16,6 +16,7 @@ export class TicketService {
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
   ) {}
+
   async create(createTicketDto: CreateTicketDto, user: User) {
     const { bookId } = createTicketDto;
     try {
@@ -58,10 +59,11 @@ export class TicketService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<any> {
     const ticket = await this.ticketRepository.delete(id);
+    console.log(ticket);
     if (ticket.affected === 0) {
-      throw new NotFoundException();
+      throw new NotFoundException('Not found');
     }
     return ticket;
   }

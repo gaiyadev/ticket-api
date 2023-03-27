@@ -52,4 +52,9 @@ export class StudentController {
   async remove(@Param('id') id: string) {
     return await this.studentService.remove(+id);
   }
+
+  @Get('/counts')
+  async StudentsCount() {
+    return await this.studentService.StudentsCount();
+  }
 }

@@ -218,4 +218,8 @@ export class UserService {
       }
     }
   }
+
+  async StudentsCount() {
+    return await this.usersRepository.findAndCount();
+  }
 }

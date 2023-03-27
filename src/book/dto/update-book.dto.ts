@@ -9,4 +9,7 @@ export class UpdateBookDto {
 
   @IsNotEmpty()
   time: string;
+
+  @IsNotEmpty()
+  price: string;
 }

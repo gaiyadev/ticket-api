@@ -9,4 +9,7 @@ export class CreateBookDto {
 
   @IsNotEmpty()
   time: string;
+
+  @IsNotEmpty()
+  price: string
 }
