@@ -70,55 +70,40 @@ export class WalletService {
     }
   }
 
-  async createTransaction({
-    transactionType,
-    wallet,
-    reference,
-    amount,
-    metaData,
-  }) {
+  async createTransaction({ transactionType, wallet, amount }) {
     const transaction = new Transaction();
-    transaction.transactionType = transactionType;
     transaction.transactionType = transactionType;
     transaction.amount = amount;
     transaction.balanceBefore = Number(wallet.balance);
     transaction.balanceAfter = Number(wallet.balance) + amount;
-    transaction.transactionReference = reference;
-    transaction.metaData = metaData;
     return await this.transactionRepository.save(transaction);
   }
 
   // Add fund
-  async addFund(reference: string, id: number) {
+  async addFund(userId: any, amount: any) {
+    console.log('values', userId, amount);
     const wallet = await this.walletRepository.findOne({
-      where: { userId: id },
+      where: { userId: userId },
     });
 
     if (!wallet) {
       throw new NotFoundException('Wallet not found');
     }
-
-    const verify = await this.verifyPayment(reference);
-    if (verify.data.status === 'success') {
-      const amount = Number(verify.data.amount) / 100;
-      wallet.balance = Number(wallet.balance) + amount;
-      await this.walletRepository.save(wallet);
-
-      //create transaction
-      await this.createTransaction({
-        amount: amount,
-        metaData: verify.data.authorization,
-        reference: verify.data.reference,
-        transactionType: TransactionType.funding,
-        wallet,
-      });
-      return {
-        message: 'Wallet Funded successfully',
-        balance: wallet.balance,
-        status: 'Success',
-        statusCode: 201,
-      };
-    }
+    console.log(wallet);
+    wallet.balance = Number(wallet.balance) + Number(amount);
+    const success = await this.walletRepository.save(wallet);
+    if (!success) throw new ForbiddenException();
+    await this.createTransaction({
+      amount: amount,
+      transactionType: TransactionType.funding,
+      wallet,
+    });
+    return {
+      message: 'Wallet Funded successfully',
+      balance: wallet.balance,
+      status: 'Success',
+      statusCode: 201,
+    };
   }
 
   //transfer fund
@@ -155,13 +140,11 @@ export class WalletService {
 
     await this.createTransaction({
       amount: transferFund.amount,
-      reference: account.walletId,
       transactionType: TransactionType.Transfer,
       wallet,
-      metaData: null,
     });
     return {
-      message: 'Charge successfully',
+      message: 'Transferred successfully',
       status: 'Success',
       statusCode: 201,
       data: wallet.balance,

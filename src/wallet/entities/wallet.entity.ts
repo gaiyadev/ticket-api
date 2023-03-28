@@ -1,11 +1,11 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, ManyToOne,
+  Entity,
+  ManyToOne,
   OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn
-} from "typeorm";
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { User } from '../../user/entities/user.entity';
 

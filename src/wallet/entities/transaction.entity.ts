@@ -17,7 +17,7 @@ export class Transaction {
     nullable: false,
     type: 'varchar',
     name: 'transaction_reference',
-    unique: true,
+    unique: false,
   })
   transactionReference: string;
 

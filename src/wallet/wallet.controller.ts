@@ -12,6 +12,7 @@ import {
   ValidationPipe,
   UsePipes,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { CreateWalletDto } from './dto/create-wallet.dto';
@@ -50,10 +51,10 @@ export class WalletController {
     return this.walletService.remove(+id);
   }
 
-  @Get('/verify-payment/:reference/:id')
+  @Get('/add-fund/:userId/:amount')
   @HttpCode(HttpStatus.CREATED)
-  async addFund(@Param('reference') reference: string, @Param() id: number) {
-    return await this.walletService.addFund(reference, id);
+  async addFund(@Param('userId') userId: any, @Param('amount') amount: any) {
+    return await this.walletService.addFund(userId, amount);
   }
 
   @Post('/wallet-transfer')

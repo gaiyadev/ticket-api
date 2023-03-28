@@ -110,11 +110,11 @@ export class UserService {
     const user = await this.usersRepository.findOne({
       where: { reqNumber: regNumber },
     });
+    console.log(user);
 
     if (!user) {
       throw new ForbiddenException('Invalid Email or/and Password.');
     }
-
     const hashedPassword = user.password;
     const isMatch = await UserService.comparePassword(password, hashedPassword);
     if (!isMatch) {
@@ -136,6 +136,7 @@ export class UserService {
         reqNumber: regNumber,
         id: user.id,
         isAdmin: user.isAdmin,
+        email: user.email,
       },
     };
   }
