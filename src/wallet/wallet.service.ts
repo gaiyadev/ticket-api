@@ -2,18 +2,19 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Wallet } from './entities/wallet.entity';
-import { Repository } from 'typeorm';
-import { Transaction } from './entities/transaction.entity';
-import { TransactionType } from './interfaces/transaction-type.interface';
-import { WalletTransferFund } from './dto/transfer-fund.dto';
-import { User } from '../user/entities/user.entity';
-import axios from 'axios';
+  InternalServerErrorException,
+  NotFoundException
+} from "@nestjs/common";
+import { CreateWalletDto } from "./dto/create-wallet.dto";
+import { UpdateWalletDto } from "./dto/update-wallet.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Wallet } from "./entities/wallet.entity";
+import { Repository } from "typeorm";
+import { Transaction } from "./entities/transaction.entity";
+import { TransactionType } from "./interfaces/transaction-type.interface";
+import { WalletTransferFund } from "./dto/transfer-fund.dto";
+import { User } from "../user/entities/user.entity";
+import axios from "axios";
 
 @Injectable()
 export class WalletService {
@@ -75,7 +76,8 @@ export class WalletService {
     transaction.transactionType = transactionType;
     transaction.amount = amount;
     transaction.balanceBefore = Number(wallet.balance);
-    transaction.balanceAfter = Number(wallet.balance) + amount;
+    transaction.balanceAfter = Number(wallet.balance) + Number(amount);
+    transaction.walletId = wallet.id;
     return await this.transactionRepository.save(transaction);
   }
 
@@ -89,7 +91,6 @@ export class WalletService {
     if (!wallet) {
       throw new NotFoundException('Wallet not found');
     }
-    console.log(wallet);
     wallet.balance = Number(wallet.balance) + Number(amount);
     const success = await this.walletRepository.save(wallet);
     if (!success) throw new ForbiddenException();
@@ -149,5 +150,15 @@ export class WalletService {
       statusCode: 201,
       data: wallet.balance,
     };
+  }
+  async transactions(walletId: number) {
+    console.log(walletId);
+    try {
+      return await this.transactionRepository.find({
+        where: { walletId: walletId },
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 }

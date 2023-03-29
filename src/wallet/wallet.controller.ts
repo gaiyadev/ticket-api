@@ -66,4 +66,9 @@ export class WalletController {
   ): Promise<any> {
     return await this.walletService.walletTransferFund(transferFund, user);
   }
+
+  @Get('/transactions/:walletId')
+  async transactions(@Param('walletId') walletId: number) {
+    return await this.walletService.transactions(walletId);
+  }
 }

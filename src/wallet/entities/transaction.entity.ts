@@ -13,6 +13,9 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  walletId: number;
+
   @Column({
     nullable: false,
     type: 'varchar',
