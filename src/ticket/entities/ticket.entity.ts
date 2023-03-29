@@ -13,6 +13,15 @@ export class Ticket {
   @Column()
   bookId: number;
 
+  @Column()
+  seat_number: number;
+
+  @Column()
+  amount: number;
+
+  @Column()
+  uniqueId: string;
+
   @ManyToOne(() => User, (user) => user.tickets, {
     onDelete: 'CASCADE',
   })

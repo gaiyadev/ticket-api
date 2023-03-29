@@ -8,8 +8,9 @@ import {
   Delete,
   UseGuards,
   UsePipes,
-  ValidationPipe, ParseIntPipe
-} from "@nestjs/common";
+  ValidationPipe,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -22,13 +23,9 @@ export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
 
   @Post('/')
-  @UseGuards(AuthGuard('user'))
   @UsePipes(ValidationPipe)
-  async create(
-    @Body() createTicketDto: CreateTicketDto,
-    @GetUser() user: User,
-  ) {
-    return await this.ticketService.create(createTicketDto, user);
+  async create(@Body() createTicketDto: CreateTicketDto) {
+    return await this.ticketService.create(createTicketDto);
   }
 
   @Get('/')

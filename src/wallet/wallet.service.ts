@@ -3,18 +3,18 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException
-} from "@nestjs/common";
-import { CreateWalletDto } from "./dto/create-wallet.dto";
-import { UpdateWalletDto } from "./dto/update-wallet.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Wallet } from "./entities/wallet.entity";
-import { Repository } from "typeorm";
-import { Transaction } from "./entities/transaction.entity";
-import { TransactionType } from "./interfaces/transaction-type.interface";
-import { WalletTransferFund } from "./dto/transfer-fund.dto";
-import { User } from "../user/entities/user.entity";
-import axios from "axios";
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateWalletDto } from './dto/create-wallet.dto';
+import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wallet } from './entities/wallet.entity';
+import { Repository } from 'typeorm';
+import { Transaction } from './entities/transaction.entity';
+import { TransactionType } from './interfaces/transaction-type.interface';
+import { WalletTransferFund } from './dto/transfer-fund.dto';
+import { User } from '../user/entities/user.entity';
+import axios from 'axios';
 
 @Injectable()
 export class WalletService {

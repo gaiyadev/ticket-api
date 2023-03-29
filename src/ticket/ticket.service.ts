@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,21 +10,42 @@ import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
+import { Wallet } from '../wallet/entities/wallet.entity';
 
 @Injectable()
 export class TicketService {
   constructor(
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    @InjectRepository(Wallet)
+    private readonly walletRepository: Repository<Wallet>,
   ) {}
 
-  async create(createTicketDto: CreateTicketDto, user: User) {
-    const { bookId } = createTicketDto;
+  async create(createTicketDto: CreateTicketDto) {
+    const { bookId, userId, amount, seatNumber } = createTicketDto;
+    const wallet = await this.walletRepository.findOne({
+      where: { userId: userId },
+    });
+
+    if (Number(wallet.balance) < Number(amount)) {
+      throw new BadRequestException('insufficient fund');
+    }
+
     try {
       const ticket = new Ticket();
-      ticket.userId = user.id as any;
+      ticket.userId = userId as any;
       ticket.bookId = bookId as any;
-      return await this.ticketRepository.save(ticket);
+      ticket.amount = amount;
+      ticket.seat_number = seatNumber;
+      ticket.uniqueId = `BUK/${new Date().getFullYear()} /${userId}_${bookId}.${amount}`;
+      const book = await this.ticketRepository.save(ticket);
+      if (!book) {
+        throw new InternalServerErrorException();
+      }
+      const balance = Number(wallet.balance);
+      wallet.balance = Number(balance) - Number(amount);
+      await this.walletRepository.save(wallet);
+      return book;
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
