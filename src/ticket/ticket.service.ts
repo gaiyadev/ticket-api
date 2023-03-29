@@ -51,9 +51,9 @@ export class TicketService {
     }
   }
 
-  async findAll(user: User) {
+  async findAll(id: number) {
     try {
-      return await this.ticketRepository.find({ where: { userId: user.id } });
+      return await this.ticketRepository.find({ where: { userId: id } });
     } catch (e) {
       throw new InternalServerErrorException();
     }

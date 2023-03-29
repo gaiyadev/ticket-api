@@ -28,10 +28,9 @@ export class TicketController {
     return await this.ticketService.create(createTicketDto);
   }
 
-  @Get('/')
-  @UseGuards(AuthGuard('user'))
-  async findAll(@GetUser() user: User) {
-    return await this.ticketService.findAll(user);
+  @Get('/book/:id')
+  async findAll(@Param('id') id: number) {
+    return await this.ticketService.findAll(id);
   }
 
   @Get('/:id')
