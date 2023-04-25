@@ -61,6 +61,9 @@ export class User {
   @Column({ nullable: false, default: false })
   isAdmin: boolean;
 
+  @Column({ nullable: false, default: false })
+  isActive: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

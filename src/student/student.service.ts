@@ -9,12 +9,16 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
@@ -62,22 +66,27 @@ export class StudentService {
   }
 
   async findAll() {
-    return await this.studentRepository.find({ order: { id: 'DESC' } });
+    return await this.userRepository.find({ order: { id: 'DESC' } });
   }
 
   async findStudent(id: number) {
-    const student = await this.studentRepository.findOne({ where: { id: id } });
+    const student = await this.userRepository.findOne({ where: { id: id } });
     if (!student) {
       throw new NotFoundException();
     }
     return student;
   }
+
   async findOne(id: any) {
-    const student = await this.studentRepository.findOne({
+    const student = await this.userRepository.findOne({
       where: { reqNumber: id.student },
     });
+
     if (!student) {
       throw new NotFoundException('Reg. Number not found');
+    }
+    if (student.isActive === true) {
+      throw new ConflictException('Student already registered');
     }
     return student;
   }

@@ -20,6 +20,7 @@ import { GetUser } from './custom-decorators/user-auth.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { SignInDto } from './dtos/sign-in.dto';
+import { CreateStudentDto } from '../student/dto/create-student.dto';
 
 @Controller('users')
 export class UserController {
@@ -39,6 +40,12 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async signIn(@Body() signInDto: SignInDto): Promise<any> {
     return await this.userService.signIn(signInDto);
+  }
+
+  @Post('/add')
+  @UsePipes(ValidationPipe)
+  async addStudent(@Body() createStudentDto: CreateStudentDto): Promise<any> {
+    return await this.userService.addStudent(createStudentDto);
   }
 
   @Get('/')

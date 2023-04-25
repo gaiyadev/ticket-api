@@ -9,7 +9,6 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../user/entities/user.entity';
 import { Wallet } from '../wallet/entities/wallet.entity';
 
 @Injectable()
@@ -37,7 +36,9 @@ export class TicketService {
       ticket.bookId = bookId as any;
       ticket.amount = amount;
       ticket.seat_number = seatNumber;
-      ticket.uniqueId = `BUK/${new Date().getFullYear()} /${userId}_${bookId}.${amount}`;
+      ticket.uniqueId = `BUK/${new Date().getFullYear()}/${Math.random()
+        .toString(36)
+        .slice(-5)}`;
       const book = await this.ticketRepository.save(ticket);
       if (!book) {
         throw new InternalServerErrorException();
@@ -59,8 +60,19 @@ export class TicketService {
     }
   }
 
-  async findOne(id: number) {
-    const ticket = await this.ticketRepository.findOne({ where: { id: id } });
+  async findAllB(id: string) {
+    try {
+      return await this.ticketRepository.find({ relations: ['user'] });
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async findOne(id: string) {
+    const ticket = await this.ticketRepository.findOne({
+      where: { uniqueId: id },
+    });
     if (!ticket) {
       throw new NotFoundException();
     }

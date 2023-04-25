@@ -26,7 +26,7 @@ export class StudentController {
 
   @Get('/')
   async findAll() {
-    return this.studentService.findAll();
+    return await this.studentService.findAll();
   }
 
   @Get('/user/:id')

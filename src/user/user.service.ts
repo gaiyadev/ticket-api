@@ -16,6 +16,8 @@ import * as dotenv from 'dotenv';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordDto } from './dtos/change-password.dto';
 import { SignInDto } from './dtos/sign-in.dto';
+import { CreateStudentDto } from '../student/dto/create-student.dto';
+import { Student } from '../student/entities/student.entity';
 dotenv.config();
 
 @Injectable()
@@ -62,9 +64,11 @@ export class UserService {
     } = signUpDto;
 
     const saltOrRound = await bcrypt.genSalt(parseInt(process.env.GEN_SALT));
-
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException();
+    }
     try {
-      const user = new User();
       user.firstName = firstName;
       user.lastName = lastName;
       user.middleName = middleName;
@@ -74,6 +78,7 @@ export class UserService {
       user.level = level;
       user.reqNumber = reqNumber;
       user.department = department;
+      user.isActive = true;
       user.password = await UserService.hashPassword(password, saltOrRound);
       const savedUser = await this.usersRepository.save(user);
       if (!savedUser) return;
@@ -103,6 +108,50 @@ export class UserService {
     }
   }
 
+  async addStudent(createStudentDto: CreateStudentDto): Promise<Student> {
+    const {
+      faculty,
+      department,
+      email,
+      firstName,
+      lastName,
+      middleName,
+      level,
+      reqNumber,
+      course,
+    } = createStudentDto;
+    const found = await this.usersRepository.findOne({
+      where: { email: email },
+    });
+
+    if (found) {
+      throw new ConflictException('email already added');
+    }
+
+    const user = await this.usersRepository.findOne({
+      where: { reqNumber: reqNumber },
+    });
+
+    if (user) {
+      throw new ConflictException('Student already added');
+    }
+    try {
+      const student = new Student();
+      student.faculty = faculty;
+      student.email = email;
+      student.department = department;
+      student.firstName = firstName;
+      student.lastName = lastName;
+      student.middleName = middleName;
+      student.level = level;
+      student.reqNumber = reqNumber;
+      student.course = course;
+      return await this.usersRepository.save(student);
+    } catch (e) {
+      throw new InternalServerErrorException('An error occurred');
+    }
+  }
+
   //
   async signIn(signInDto: SignInDto): Promise<any> {
     const { regNumber, password } = signInDto;
@@ -110,10 +159,13 @@ export class UserService {
     const user = await this.usersRepository.findOne({
       where: { reqNumber: regNumber },
     });
-    console.log(user);
 
     if (!user) {
       throw new ForbiddenException('Invalid Email or/and Password.');
+    }
+
+    if (!user.isAdmin && !user.isActive) {
+      throw new ForbiddenException('Student not active.');
     }
     const hashedPassword = user.password;
     const isMatch = await UserService.comparePassword(password, hashedPassword);
