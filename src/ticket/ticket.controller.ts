@@ -9,8 +9,9 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
-  ParseIntPipe, Query
-} from "@nestjs/common";
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -39,7 +40,7 @@ export class TicketController {
   }
 
   @Get('/:id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return await this.ticketService.findOne(id);
   }
 
@@ -54,5 +55,10 @@ export class TicketController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<any> {
     return await this.ticketService.remove(id);
+  }
+
+  @Get('/app-stats/:id')
+  async stats(@Param('id') id: number) {
+    return await this.ticketService.stats(id);
   }
 }

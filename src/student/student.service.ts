@@ -131,7 +131,7 @@ export class StudentService {
   }
 
   async remove(id: number) {
-    const student = await this.studentRepository.delete(id);
+    const student = await this.userRepository.delete(id);
     if (student.affected === 0) {
       throw new NotFoundException();
     }

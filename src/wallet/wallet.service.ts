@@ -152,10 +152,10 @@ export class WalletService {
     };
   }
   async transactions(walletId: number) {
-    console.log(walletId);
     try {
       return await this.transactionRepository.find({
         where: { walletId: walletId },
+        order: { id: 'DESC' },
       });
     } catch (e) {
       throw new InternalServerErrorException();
