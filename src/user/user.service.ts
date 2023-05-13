@@ -18,6 +18,7 @@ import { ChangePasswordDto } from './dtos/change-password.dto';
 import { SignInDto } from './dtos/sign-in.dto';
 import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { Student } from '../student/entities/student.entity';
+import readXlsxFile from 'read-excel-file/node';
 dotenv.config();
 
 @Injectable()
@@ -274,5 +275,74 @@ export class UserService {
 
   async StudentsCount() {
     return await this.usersRepository.findAndCount();
+  }
+
+  async uploadExcelFile(file: any, req: any): Promise<any> {
+    console.log('file', file);
+    if (!file) {
+      throw new BadRequestException('Excel file is required');
+    }
+    const originalName = file.originalname;
+    const fileExtension = originalName.split('.').pop();
+    if (fileExtension !== 'xlsx') {
+      throw new BadRequestException('Only xlsx File format is allowed');
+    }
+
+    const users: Array<{
+      email: string;
+      firstName: string;
+      lastName: string;
+      department: string;
+      level: string;
+      middleName: string;
+      faculty: string;
+      course: string;
+      reqNumber: string;
+    }> = [];
+
+    // Handling file upload
+    readXlsxFile(file.buffer)
+      .then(async (rows) => {
+        // skip header
+        rows.shift();
+        rows.forEach((row) => {
+          const user: any = {
+            firstName: row[0],
+            lastName: row[1],
+            middleName: row[2],
+            email: row[3],
+            level: row[4],
+            reqNumber: row[5],
+            department: row[6],
+            course: row[7],
+            faculty: row[8],
+          };
+          users.push(user);
+        });
+        // Save to db
+        for (const user of users) {
+          const newUser = new User();
+          newUser.firstName = user.firstName;
+          newUser.lastName = user.lastName;
+          newUser.middleName = user.middleName;
+          newUser.email = user.email;
+          newUser.level = user.level;
+          newUser.course = user.course;
+          newUser.department = user.department;
+          newUser.faculty = user.faculty;
+          newUser.reqNumber = user.reqNumber;
+          await this.usersRepository.save(user);
+        }
+        console.log(users);
+        return req.status(201).json({
+          message: 'Upload successfully',
+          status: 'Success',
+          statusCode: 201,
+          data: users,
+        });
+      })
+      .catch((err) => {
+        throw new InternalServerErrorException(err.stack);
+      });
   }
 }

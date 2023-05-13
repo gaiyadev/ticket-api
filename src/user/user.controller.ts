@@ -9,7 +9,11 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -21,6 +25,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { SignInDto } from './dtos/sign-in.dto';
 import { CreateStudentDto } from '../student/dto/create-student.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UserController {
@@ -83,5 +88,18 @@ export class UserController {
   @Get('/active/counts')
   async StudentsCount() {
     return await this.userService.StudentsCount();
+  }
+
+  /*
+   *  Upload excle file
+   * */
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/upload-excel')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadExcelFile(
+    @UploadedFile() file: any,
+    @Res() req: any,
+  ): Promise<any> {
+    return await this.userService.uploadExcelFile(file, req);
   }
 }
