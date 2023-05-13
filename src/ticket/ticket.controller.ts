@@ -61,4 +61,14 @@ export class TicketController {
   async stats(@Param('id') id: number) {
     return await this.ticketService.stats(id);
   }
+
+  @Get('/pay/with-card/:data')
+  async payWithCard(@Param('data') data: any) {
+    return await this.ticketService.payWithCard(data);
+  }
+
+  @Patch('/reschedule/:id')
+  async reschedule(@Param('id') id: number, @Body() data: any) {
+    return await this.ticketService.reschedule(id, data);
+  }
 }

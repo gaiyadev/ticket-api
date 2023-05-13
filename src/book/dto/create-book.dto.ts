@@ -11,5 +11,5 @@ export class CreateBookDto {
   time: string;
 
   @IsNotEmpty()
-  price: string
+  price: string;
 }

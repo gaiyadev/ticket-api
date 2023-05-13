@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateTicketDto {
   @IsNotEmpty()
-  bookId: number;
+  bookId: any;
 
   @IsNotEmpty()
   userId: any;

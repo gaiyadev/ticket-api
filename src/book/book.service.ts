@@ -14,8 +14,7 @@ export class BookService {
   constructor(
     @InjectRepository(Book)
     private readonly bookRepository: Repository<Book>,
-  ) {
-  }
+  ) {}
 
   async create(createBookDto: CreateBookDto) {
     return await this.bookRepository.save(createBookDto);
@@ -57,5 +56,4 @@ export class BookService {
     }
     return book;
   }
-
 }

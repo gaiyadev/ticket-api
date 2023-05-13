@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Wallet } from '../wallet/entities/wallet.entity';
 import { Transaction } from '../wallet/entities/transaction.entity';
 import { TransactionType } from '../wallet/interfaces/transaction-type.interface';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class TicketService {
@@ -23,6 +24,9 @@ export class TicketService {
 
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createTicketDto: CreateTicketDto) {
@@ -64,7 +68,10 @@ export class TicketService {
 
   async findAll(id: number) {
     try {
-      return await this.ticketRepository.find({ where: { userId: id } });
+      return await this.ticketRepository.find({
+        where: { userId: id },
+        order: { id: 'DESC' },
+      });
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -72,7 +79,10 @@ export class TicketService {
 
   async findAllB(id: string) {
     try {
-      return await this.ticketRepository.find({ relations: ['user'] });
+      return await this.ticketRepository.find({
+        relations: ['user'],
+        order: { id: 'DESC' },
+      });
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException();
@@ -131,13 +141,57 @@ export class TicketService {
     const ticket = await this.ticketRepository.find({
       where: { userId: id },
     });
-    // const transactions = this.transactionRepository.find({
-    //   where: { id: id },
-    // });
     const data = await Promise.all([wallet, ticket]);
     return {
       walletBalance: data[0]?.balance,
       ticketBook: data[1]?.length,
     };
+  }
+
+  async payWithCard(data: any) {
+    const dto = JSON.parse(data);
+    const user = await this.userRepository.findOne({
+      where: { id: dto.userId },
+      relations: ['wallet'],
+    });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+    try {
+      const ticket = new Ticket();
+      ticket.userId = dto.userId as any;
+      ticket.bookId = dto.bookId as any;
+      ticket.amount = parseInt(dto.amount);
+      ticket.seat_number = dto.seatNumber;
+      ticket.uniqueId = `BUK/${new Date().getFullYear()}/${Math.random()
+        .toString(36)
+        .slice(-5)}`;
+      const book = await this.ticketRepository.save(ticket);
+      if (!book) {
+        throw new InternalServerErrorException();
+      }
+      const wallet = await this.walletRepository.findOne({
+        where: { userId: dto.userId },
+      });
+      await this.createTransaction({
+        amount: dto.amount,
+        transactionType: TransactionType.CardPayment,
+        wallet,
+      });
+      return book;
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
+  }
+
+  async reschedule(id: number, data: any) {
+    const booking = await this.ticketRepository.findOne({ where: { id: id } });
+
+    if (!booking) {
+      throw new NotFoundException();
+    }
+
+    return booking;
   }
 }
