@@ -122,14 +122,14 @@ export class WalletService {
     });
 
     if (!account) {
-      throw new BadRequestException('Account not found');
+      throw new BadRequestException('Recipient accountId not found');
     }
 
     if (account.walletId === accountId) {
       throw new BadRequestException('Cannot send money to self');
     }
 
-    if (parseInt(amount) < parseInt(wallet.balance)) {
+    if (parseInt(amount) >= parseInt(wallet.balance)) {
       throw new ForbiddenException('Insufficient found');
     }
 
@@ -146,6 +146,7 @@ export class WalletService {
       transactionType: TransactionType.Transfer,
       wallet,
     });
+
     return {
       message: 'Transferred successfully',
       status: 'Success',
@@ -153,6 +154,7 @@ export class WalletService {
       data: wallet.balance,
     };
   }
+
   async transactions(walletId: number) {
     try {
       return await this.transactionRepository.find({
