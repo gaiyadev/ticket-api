@@ -58,13 +58,11 @@ export class WalletController {
   }
 
   @Post('/wallet-transfer')
-  @UseGuards(AuthGuard('user'))
   @UsePipes(ValidationPipe)
   async walletTransferFund(
     @Body() transferFund: WalletTransferFund,
-    @GetUser() user: User,
   ): Promise<any> {
-    return await this.walletService.walletTransferFund(transferFund, user);
+    return await this.walletService.walletTransferFund(transferFund);
   }
 
   @Get('/transactions/:walletId')

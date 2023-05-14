@@ -86,7 +86,7 @@ export class UserService {
 
       const wallet = new Wallet();
       wallet.userId = savedUser.id as any;
-      wallet.walletId = new Date().getTime().toString(8);
+      wallet.walletId = reqNumber; //new Date().getTime().toString(8);
       await this.walletRepository.save(wallet);
       return {
         message: 'Account created successfully',

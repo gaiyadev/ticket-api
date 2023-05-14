@@ -2,8 +2,11 @@ import { IsNotEmpty } from 'class-validator';
 
 export class WalletTransferFund {
   @IsNotEmpty()
-  amount: string;
+  amount: any;
 
   @IsNotEmpty()
-  accountId: string;
+  accountId: any;
+
+  @IsNotEmpty()
+  userId: number;
 }
