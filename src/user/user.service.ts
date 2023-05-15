@@ -278,7 +278,6 @@ export class UserService {
   }
 
   async uploadExcelFile(file: any, req: any): Promise<any> {
-    console.log('file', file);
     if (!file) {
       throw new BadRequestException('Excel file is required');
     }
@@ -333,7 +332,7 @@ export class UserService {
           newUser.reqNumber = user.reqNumber;
           await this.usersRepository.save(user);
         }
-        console.log(users);
+
         return req.status(201).json({
           message: 'Upload successfully',
           status: 'Success',

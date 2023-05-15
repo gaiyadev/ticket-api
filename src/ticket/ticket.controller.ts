@@ -71,4 +71,9 @@ export class TicketController {
   async reschedule(@Param('id') id: number, @Body() data: any) {
     return await this.ticketService.reschedule(id, data);
   }
+
+  @Get('/ticket/validate')
+  async validateTicket(@Query('id') id: string): Promise<any> {
+    return await this.ticketService.validateTicket(id);
+  }
 }

@@ -194,4 +194,16 @@ export class TicketService {
 
     return booking;
   }
+
+  async validateTicket(id: string): Promise<any> {
+    const ticket = await this.ticketRepository.findOne({
+      where: { uniqueId: id },
+    });
+
+    if (!ticket) {
+      throw new NotFoundException('Ticket Not valid');
+    }
+
+    return ticket;
+  }
 }
