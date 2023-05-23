@@ -38,7 +38,7 @@ export class WalletService {
     const found = await this.walletRepository.findOne({
       where: { userId: id },
     });
-
+    //30402420666057 to //30236024100747
     if (!found) {
       throw new NotFoundException('Wallet not found');
     }
@@ -111,7 +111,9 @@ export class WalletService {
   async walletTransferFund(transferFund: WalletTransferFund): Promise<any> {
     const { accountId, amount, userId } = transferFund;
 
-    const wallet = await this.getWallet(userId);
+    const wallet = await this.walletRepository.findOne({
+      where: { userId: userId },
+    });
     if (!wallet) {
       throw new NotFoundException('Wallet not found');
     }
@@ -125,16 +127,16 @@ export class WalletService {
       throw new BadRequestException('Recipient accountId not found');
     }
 
-    if (account.walletId === accountId) {
+    if (wallet.walletId === accountId) {
       throw new BadRequestException('Cannot send money to self');
     }
 
-    if (parseInt(amount) >= parseInt(wallet.balance)) {
+    if (parseInt(amount) > parseInt(String(wallet.balance))) {
       throw new ForbiddenException('Insufficient found');
     }
 
     // Debiting the sender
-    wallet.balance = parseInt(wallet.balance) - parseInt(amount);
+    wallet.balance = parseInt(String(wallet.balance)) - parseInt(amount);
     await this.walletRepository.save(wallet);
 
     // Crediting the recipient

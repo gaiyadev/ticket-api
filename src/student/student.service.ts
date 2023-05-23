@@ -78,6 +78,7 @@ export class StudentService {
   }
 
   async findOne(id: any) {
+    console.log(id);
     const student = await this.userRepository.findOne({
       where: { reqNumber: id.student },
     });
